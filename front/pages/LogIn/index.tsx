@@ -7,8 +7,10 @@ import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
-  const {data, error} = useSWR('http://localhost:3095/api/users', fetcher)
-  // fetcher는 주소를 어떻게 처리할지 우리가 정의해주어야한다.
+  const {data, error, revalidate} = useSWR('/api/users', fetcher, {
+    dedupingInterval : 100000,
+  })
+  // fetcher는 주소를 어떻게 처리할지 우리가 정의해주어야한다. utils/fetcher에서
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -25,7 +27,7 @@ const LogIn = () => {
           },
         )
         .then((response) => {
-          // revalidate();
+          revalidate();
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);
@@ -33,6 +35,16 @@ const LogIn = () => {
     },
     [email, password],
   );
+
+  if (data === undefined) {
+    return <div>로딩중 ...</div>
+  }
+
+  // data : false -> 로그인버튼 -> 내정보
+  if (data) {
+    return <Redirect to="/workspace/channel" />
+  }
+
 
 
   return (
