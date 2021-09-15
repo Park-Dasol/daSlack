@@ -6,7 +6,6 @@ const Channel = () => {
   return (
     <Container>
       <Header>
-
         <div>여기는 채널</div>
       </Header>
     </Container>
