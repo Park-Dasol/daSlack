@@ -43,7 +43,7 @@ const SignUp = () => {
           email, nickname, password,
         }).then((response) => {
           console.log(response)
-          setSignUpSuccess(true);
+          setSignUpSuccess(true); 
         })
         .catch((error)=>{
           console.log(error.response.data)
