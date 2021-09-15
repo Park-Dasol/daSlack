@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, {FC, useCallback} from 'react'
 import useSWR from 'swr'
 import fetcher from '@utils/fetcher'
-import { Redirect } from 'react-router'
+import { Redirect, Switch, Route } from 'react-router'
 import {
   AddButton,
   Channels,
@@ -20,6 +20,12 @@ import {
   WorkspaceWrapper,
 } from '@layouts/Workspace/styles';
 import gravatar from 'gravatar'
+import loadable from '@loadable/component'
+
+const Channel = loadable(()=> import('@pages/Channel'))
+const DirectMessage = loadable(()=> import('@pages/DirectMessage'))
+
+
 
 const Workspace:FC = ({children})=> {
   const { data, error, revalidate, mutate} = useSWR('/api/users', fetcher, {
@@ -49,14 +55,18 @@ const Workspace:FC = ({children})=> {
           </span>
         </RightMenu>
       </Header>
-
       <WorkspaceWrapper>
         <Workspaces>worksppace</Workspaces>
         <Channels>
           <WorkspaceName>workspacename</WorkspaceName>
           <MenuScroll>menuscroll</MenuScroll>
         </Channels>
-         <Chats>chats</Chats>
+         <Chats>
+           <Switch>
+            <Route path="/workspace/channel" component={Channel}/>
+            <Route path="/workspace/dm" component={DirectMessage}/>
+           </Switch>
+         </Chats> 
       </WorkspaceWrapper>
       <button onClick={onLogout}>로그아웃</button>
       {children}
