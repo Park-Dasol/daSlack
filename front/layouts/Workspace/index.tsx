@@ -31,6 +31,8 @@ import {toast} from 'react-toastify'
 import CreateChannelModal from '@components/CreateChannelModal'
 import InviteWorkspaceModal from '@components/InviteWorkspaceModal'; 
 import InviteChannelModal from '@components/InviteChannelModal'; 
+import DMList from '@components/DMList'
+import ChannelList from '@components/ChannelList'
 
 const Channel = loadable(()=> import('@pages/Channel'))
 const DirectMessage = loadable(()=> import('@pages/DirectMessage'))
@@ -47,6 +49,10 @@ const Workspace:VFC = ()=> {
     userData? `/api/workspaces/${workspace}/channels`:null,
     fetcher
   ) // 조건부 요청 로그인한 상태일때만 채널을 가져오도록 함
+  const {data: memberData} = useSWR<IUser[]>(
+    userData? `/api/workspaces/${workspace}/members`:null,
+    fetcher
+  ) 
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false)
   const [showInviteWorkspaceModal, setShowInviteWorkspaceModal] = useState(false)
@@ -117,7 +123,7 @@ const Workspace:VFC = ()=> {
 
 
   const onClickInviteWorkspace = useCallback(()=> {
-
+    setShowInviteWorkspaceModal(true)
   }, [])
 
   if (!userData) { // return은 항상 hooks들 보다 아래에 있어야만 에러가 나지 않는다.
@@ -163,14 +169,17 @@ const Workspace:VFC = ()=> {
             <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{top: 95,  left: 80}}>
               <WorkspaceModal>
               <h2>daSlack</h2>
+              <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button>
               <button onClick={onClickAddChannel}>채널만들기</button>
               <button onClick={onLogout}>로그아웃</button>
 
               </WorkspaceModal>
             </Menu>
-            {channelData?.map((y)=> (
+            {/* {channelData?.map((y)=> (
               <div>{y.name}</div>
-            ))}
+            ))} */}
+            <ChannelList/>
+            <DMList/>
           </MenuScroll> 
         </Channels>
          <Chats>
