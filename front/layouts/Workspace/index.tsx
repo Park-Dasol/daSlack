@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, {VFC, useCallback, useState} from 'react'
 import useSWR from 'swr'
 import fetcher from '@utils/fetcher'
-import { Redirect, Switch, Route } from 'react-router'
+import { Redirect, Switch, Route, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import {
   AddButton,
@@ -23,7 +23,7 @@ import {
 import gravatar from 'gravatar'
 import loadable from '@loadable/component'
 import Menu from '@components/Menu'
-import { IUser } from '@typings/db'
+import { IUser , IChannel} from '@typings/db'
 import { Button, Input, Label } from '@pages/SignUp/styles'
 import useInput from '@hooks/useInput'
 import Modal from '@components/Modal'
@@ -36,9 +36,15 @@ const DirectMessage = loadable(()=> import('@pages/DirectMessage'))
 
 
 const Workspace:VFC = ()=> {
+
+  const {workspace} = useParams<{workspace : string}>();
   const { data : userData, error, revalidate, mutate} = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 2000, // 2초
   })
+  const {data: channelData} = useSWR<IChannel[]>(
+    userData? `/api/workspaces/${workspace}/channels`:null,
+    fetcher
+  ) // 조건부 요청 로그인한 상태일때만 채널을 가져오도록 함
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false)
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false)
@@ -153,12 +159,15 @@ const Workspace:VFC = ()=> {
 
               </WorkspaceModal>
             </Menu>
-          </MenuScroll>
+            {channelData?.map((y)=> (
+              <div>{y.name}</div>
+            ))}
+          </MenuScroll> 
         </Channels>
          <Chats>
            <Switch>
-            <Route path="/workspace/channel" component={Channel}/>
-            <Route path="/workspace/dm" component={DirectMessage}/>
+            <Route path="/workspace/:workspace/channel/:channel" component={Channel}/>
+            <Route path="/workspace/:workspace/dm/:id" component={DirectMessage}/>
            </Switch>
          </Chats> 
       </WorkspaceWrapper>
@@ -178,6 +187,7 @@ const Workspace:VFC = ()=> {
       <CreateChannelModal 
       show={showCreateChannelModal} 
       onCloseModal={onCloseModal}
+      setShowCreateChannelModal={setShowCreateChannelModal}
      />
     </div>
   )

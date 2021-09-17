@@ -44,7 +44,7 @@ const LogIn = () => {
   // data : false -> 로그인버튼 -> 내정보
   if (data) {
     console.log(data)
-    return <Redirect to="/workspace/channel" />
+    return <Redirect to="/workspace/sleact/channel/일반" />
   }
 
 
