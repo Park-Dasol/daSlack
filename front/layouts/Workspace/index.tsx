@@ -29,6 +29,8 @@ import useInput from '@hooks/useInput'
 import Modal from '@components/Modal'
 import {toast} from 'react-toastify'
 import CreateChannelModal from '@components/CreateChannelModal'
+import InviteWorkspaceModal from '@components/InviteWorkspaceModal'; 
+import InviteChannelModal from '@components/InviteChannelModal'; 
 
 const Channel = loadable(()=> import('@pages/Channel'))
 const DirectMessage = loadable(()=> import('@pages/DirectMessage'))
@@ -47,6 +49,8 @@ const Workspace:VFC = ()=> {
   ) // 조건부 요청 로그인한 상태일때만 채널을 가져오도록 함
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false)
+  const [showInviteWorkspaceModal, setShowInviteWorkspaceModal] = useState(false)
+  const [showInviteChannelModal, setShowInviteChannelModal] = useState(false)
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false)
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false)
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('')
@@ -99,6 +103,8 @@ const Workspace:VFC = ()=> {
   const onCloseModal = useCallback(()=> {
     setShowCreateWorkspaceModal(false)
     setShowCreateChannelModal(false)
+    setShowInviteWorkspaceModal(false)
+    setShowInviteChannelModal(false)
   }, [])
 
   const toggleWorkspaceModal = useCallback(()=> {
@@ -110,6 +116,9 @@ const Workspace:VFC = ()=> {
   }, [])
 
 
+  const onClickInviteWorkspace = useCallback(()=> {
+
+  }, [])
 
   if (!userData) { // return은 항상 hooks들 보다 아래에 있어야만 에러가 나지 않는다.
     return <Redirect to="/login"/>
@@ -189,6 +198,16 @@ const Workspace:VFC = ()=> {
       onCloseModal={onCloseModal}
       setShowCreateChannelModal={setShowCreateChannelModal}
      />
+      <InviteWorkspaceModal
+      show={showInviteWorkspaceModal} 
+      onCloseModal={onCloseModal}
+      setShowInviteWorkspaceModal={setShowInviteWorkspaceModal}
+      />
+      <InviteChannelModal
+      show={showInviteChannelModal} 
+      onCloseModal={onCloseModal}
+      setShowInviteChannelModal={setShowInviteChannelModal}
+      />
     </div>
   )
 }
