@@ -16,7 +16,7 @@ interface Props {
   setShowInviteWorkspaceModal :  (flag:boolean) =>void;
 }
 
-const CreateChannelModal: VFC<Props> = ({show, onCloseModal, setShowInviteWorkspaceModal}) => {
+const InviteWorkspaceModal: VFC<Props> = ({show, onCloseModal, setShowInviteWorkspaceModal}) => {
   const [newMember, onChangeNewMember, setNewMember] = useInput('') 
   const {workspace, channel} = useParams<{workspace: string; channel: string}>(); // 주소로부터데이터를 가져오는것
   const { data : userData, error, revalidate, mutate} = useSWR<IUser | false>('/api/users', fetcher, {
@@ -65,4 +65,4 @@ const CreateChannelModal: VFC<Props> = ({show, onCloseModal, setShowInviteWorksp
   )
 }
 
-export default CreateChannelModal
+export default InviteWorkspaceModal
