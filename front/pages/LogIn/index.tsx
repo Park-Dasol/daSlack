@@ -27,8 +27,8 @@ const LogIn = () => {
           },
         )
         .then((response) => {
-          // revalidate();
-          mutate(response.data, false)  // mutate를 이용할 경우
+          revalidate();
+          // mutate(response.data, false)  // mutate를 이용할 경우
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);
@@ -38,7 +38,7 @@ const LogIn = () => {
   );
 
   if (data === undefined) {
-    return <div>로딩중 ...</div>
+    return <div>로딩중 ...</div>;
   }
 
   // data : false -> 로그인버튼 -> 내정보
