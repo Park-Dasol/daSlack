@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, {VFC, useCallback, useState} from 'react'
+import React, {VFC, useCallback, useState, useEffect} from 'react'
 import useSWR from 'swr'
 import fetcher from '@utils/fetcher'
 import { Redirect, Switch, Route, useParams } from 'react-router'
@@ -33,6 +33,7 @@ import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import InviteChannelModal from '@components/InviteChannelModal'; 
 import DMList from '@components/DMList'
 import ChannelList from '@components/ChannelList'
+import useSocket from '@hooks/useSocket'
 
 const Channel = loadable(()=> import('@pages/Channel'))
 const DirectMessage = loadable(()=> import('@pages/DirectMessage'))
@@ -62,6 +63,13 @@ const Workspace:VFC = ()=> {
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('')
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('')
 
+  const[socket, disconnect] = useSocket(workspace)
+
+  useEffect(()=> {
+    socket.on('message')
+    socket.emit()
+    disconnect()
+  }, [])
 
   const onLogout = useCallback(() => {
     axios.post('/api/users/logout', null, {
