@@ -22,7 +22,8 @@ const DirectMessage = () => {
 
   const onSubmitForm = useCallback((e)=> {
     e.preventDefault();
-    if( chat?.trim()) {
+    if(chat?.trim()) {
+      console.log(chat)
       axios.post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
         content:chat,
       })
@@ -34,7 +35,7 @@ const DirectMessage = () => {
         console.dir(error)
       })
     }
-  }, [])
+  }, [chat])
 
   if(!userData || !myData) {
     return null;
@@ -46,7 +47,7 @@ const DirectMessage = () => {
         <img src={gravatar.url(userData.email, {s: '24px', d: 'retro'})} alt={userData.nickname} />
         <span>{userData.nickname}</span>
       </Header>
-      <ChatList/>
+      <ChatList chatData={chatData}/>
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm}/>
     </Container>
   )

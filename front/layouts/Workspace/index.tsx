@@ -34,6 +34,7 @@ import InviteChannelModal from '@components/InviteChannelModal';
 import DMList from '@components/DMList'
 import ChannelList from '@components/ChannelList'
 import useSocket from '@hooks/useSocket'
+import { channel } from 'diagnostics_channel'
 
 const Channel = loadable(()=> import('@pages/Channel'))
 const DirectMessage = loadable(()=> import('@pages/DirectMessage'))
@@ -66,10 +67,18 @@ const Workspace:VFC = ()=> {
   const[socket, disconnect] = useSocket(workspace)
 
   useEffect(()=> {
-    socket.on('message')
-    socket.emit()
-    disconnect()
-  }, [])
+    if (channelData && userData && socket) {
+      console.log(socket)
+      socket?.emit('login', {id:userData.id, channels:channelData.map((v)=> v.id)})
+    }
+  }, [socket, channelData, userData])
+
+  useEffect(()=> {
+    return ()=> {
+      disconnect()
+    }
+  }, [workspace, disconnect])
+
 
   const onLogout = useCallback(() => {
     axios.post('/api/users/logout', null, {

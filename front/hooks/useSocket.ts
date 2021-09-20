@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 const backUrl = 'http://localhost:3095'
 
 const sockets: {[key:string]: SocketIOClient.Socket} = {} // typescript에서는 빈객체나 빈배열은 타이핑을 해주어야 한다.
-const useSocket = (workspace?: string) => {
+const useSocket = (workspace?: string):[SocketIOClient.Socket | undefined, () => void] => {
   const disconnect = useCallback(()=> {
     if (workspace) {
       sockets[workspace].disconnect()
@@ -14,8 +14,13 @@ const useSocket = (workspace?: string) => {
   if (!workspace) {
     return [undefined, disconnect];
   }
-  sockets[workspace] = io.connect(`${backUrl}/ws-${workspace}`)
 
+  if (!sockets[workspace]) {
+    sockets[workspace] = io.connect(`${backUrl}/ws-${workspace}`, {
+      transports : ['websocket']
+    })
+  }
+    
   return [sockets[workspace], disconnect]
 }
 
