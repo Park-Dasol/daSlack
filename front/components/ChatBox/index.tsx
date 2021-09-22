@@ -7,6 +7,7 @@ import fetcher from '@utils/fetcher';
 import { IUser } from '@typings/db';
 import { Mention , SuggestionDataItem} from 'react-mentions';
 import gravatar from 'gravatar'
+import axios from 'axios';
 
 interface Props {
   chat: string;
@@ -32,6 +33,8 @@ const ChatBox :VFC<Props>= ({chat, onSubmitForm, onChangeChat, placeholder}) => 
     if (textareaRef.current) {
       autosize(textareaRef.current)
     }
+
+   
   }, [])
 
   const onKeydownChat = useCallback((e)=> {
@@ -48,7 +51,7 @@ const ChatBox :VFC<Props>= ({chat, onSubmitForm, onChangeChat, placeholder}) => 
     search: string, 
     highlightedDisplay: React.ReactNode, 
     index: number, 
-    focus: boolean
+    focus: boolean,
     ): React.ReactNode => {
     if (!memberData) return;
     return (
@@ -61,14 +64,18 @@ const ChatBox :VFC<Props>= ({chat, onSubmitForm, onChangeChat, placeholder}) => 
     </EachMention>)
   }, [memberData])
 
+  console.log(memberData)
+
+
   return (
     <ChatArea>
       <Form onSubmit={onSubmitForm}>
         
         <MentionsTextarea 
+          id="editor-chat"
           value={chat} 
           onChange={onChangeChat} 
-          onKeyDown={onKeydownChat}
+          onKeyPress={onKeydownChat}
           placeholder={placeholder}
           inputRef={textareaRef}
           allowSuggestionsAboveCursor

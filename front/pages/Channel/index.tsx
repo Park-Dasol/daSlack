@@ -23,7 +23,7 @@ const Channel = () => {
        {/* <img src={gravatar.url(userData.email, {s: '24px', d: 'retro'})} alt={userData.nickname} />
         <span>{userData.nickname}</span> */}
       </Header>
-      <ChatList></ChatList>
+      {/* <ChatList></ChatList> */}
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm}></ChatBox>
     </Container>
    
