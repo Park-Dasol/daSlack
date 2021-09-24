@@ -11,6 +11,7 @@ import axios from 'axios'
 import { IDM } from '@typings/db'
 import makeSection from '@utils/makeSection'
 import Scrollbars from 'react-custom-scrollbars';
+import useSocket from '@hooks/useSocket';
 
 
 const DirectMessage = () => {
@@ -23,6 +24,8 @@ const DirectMessage = () => {
     (index)=> `/api/workspaces/${workspace}/dms/${id}/chats?perPage=20&page=${index +1}`,
     fetcher,
   )
+
+  const [socket] = useSocket(workspace);
   //infinite scrolling 에 필요한것
   // 데이터 요청했는데 더이상 가져올 데이터가 없을경우
   // const isEmpty = chatData?.[0]?.length === 0; 
@@ -62,6 +65,36 @@ const DirectMessage = () => {
       })
     }
   }, [chat, chatData, myData, userData, workspace, id])
+
+  const onMessage = useCallback((data)=>{
+    // id는 상대방 아이디
+    if (data.SenderId === Number(id) && myData.id !== Number(id)) {
+      mutateChat((chatData) => {
+        chatData?.[0].unshift(data);
+        return chatData;
+      }, false).then(() => {
+        if (scrollbarRef.current) {
+          if (
+            scrollbarRef.current.getScrollHeight() <
+            scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
+          ) {
+            console.log('scrollToBottom!', scrollbarRef.current?.getValues());
+            setTimeout(() => {
+              scrollbarRef.current?.scrollToBottom();
+            }, 50);
+          }
+        }
+      });
+    }
+  }, [])
+
+  useEffect(()=> {
+    socket?.on('dm', onMessage);
+    return () =>  {
+      socket?.off('dm', onMessage)
+    }
+  }, [socket, onmessage])
+
 
   //로딩시 스크롤바 제일 아래로 붙이기
   useEffect(()=> {
