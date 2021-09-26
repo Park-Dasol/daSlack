@@ -9,14 +9,16 @@ import {Link, useParams} from 'react-router-dom'
 interface Props {
   data:(IDM| IChat);
 }
-
+const BACK_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3095' : 'https://sleact.nodebird.com';
 const Chat :VFC<Props>= ({data}) => {
   const { workspace } = useParams<{ workspace: string; channel: string }>();
   const user = 'Sender' in data ? data.Sender : data.User;
 
 
   // \d : 숫자, + 1개: 이상, ? : 0 or 1개, 
-  const result = useMemo(() => regexifyString({
+  const result = useMemo(() => 
+    data.content.startsWith('uploads\\') ? (<img src={`${BACK_URL}/${data.content}`} style={{maxHeight:200}}/>) :
+    (regexifyString({
       input : data.content,
       pattern : /@\[(.+?)]\((\d+?)\)|\n/g,
       decorator(match, index) {
@@ -29,7 +31,7 @@ const Chat :VFC<Props>= ({data}) => {
           )
         } return  <br key={index}/>
       }
-    })
+    }))
   , [data.content])
   return <ChatWrapper>
     <div className="chat-img">

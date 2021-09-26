@@ -1,4 +1,4 @@
-import { Container,Header } from '@pages/Channel/styles'
+import { Container,Header, DragOver  } from '@pages/Channel/styles'
 import React, { useCallback, useState, useRef, useEffect } from 'react'
 import gravatar from 'gravatar'
 import useSWR, { useSWRInfinite } from 'swr'
@@ -24,6 +24,8 @@ const DirectMessage = () => {
     (index)=> `/api/workspaces/${workspace}/dms/${id}/chats?perPage=20&page=${index +1}`,
     fetcher,
   )
+
+  const [dragOver, setDragOver] = useState(false);
 
   const [socket] = useSocket(workspace);
   //infinite scrolling 에 필요한것
@@ -88,6 +90,44 @@ const DirectMessage = () => {
     }
   }, [])
 
+
+
+  const onDrop = useCallback(
+    (e) => {
+      e.preventDefault();
+      console.log(e);
+      const formData = new FormData();
+      if (e.dataTransfer.items) {
+        // Use DataTransferItemList interface to access the file(s)
+        for (let i = 0; i < e.dataTransfer.items.length; i++) {
+          // If dropped items aren't files, reject them
+          if (e.dataTransfer.items[i].kind === 'file') {
+            const file = e.dataTransfer.items[i].getAsFile();
+            console.log('... file[' + i + '].name = ' + file.name);
+            formData.append('image', file);
+          }
+        }
+      } else {
+        // Use DataTransfer interface to access the file(s)
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          console.log('... file[' + i + '].name = ' + e.dataTransfer.files[i].name);
+          formData.append('image', e.dataTransfer.files[i]);
+        }
+      }
+      axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, formData).then(() => {
+        setDragOver(false);
+        revalidate();
+      });
+    },
+    [revalidate, workspace, id],
+  );
+
+  const onDragOver = useCallback((e) => {
+    e.preventDefault();
+    console.log(e);
+    setDragOver(true);
+  }, []);
+
   useEffect(()=> {
     socket?.on('dm', onMessage);
     return () =>  {
@@ -111,13 +151,14 @@ const DirectMessage = () => {
   const chatSections = makeSection(chatData? chatData.flat().reverse() : [])
 
   return ( 
-    <Container>
+    <Container onDrop={onDrop} onDragOver={onDragOver}>
       <Header>
         <img src={gravatar.url(userData.email, {s: '24px', d: 'retro'})} alt={userData.nickname} />
         <span>{userData.nickname}</span>
       </Header>
       <ChatList chatSections={chatSections} scrollRef={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd}/>
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm}/>
+      {dragOver && <DragOver>업로드!</DragOver>}
     </Container>
   )
 }
