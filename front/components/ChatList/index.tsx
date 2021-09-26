@@ -7,7 +7,7 @@ import { EFBIG } from "constants";
 import { resourceUsage } from "process";
 
 interface Props {
-  chatSections : {[key:string]: IDM[]};
+  chatSections : {[key:string]: (IDM|IChat)[]};
   setSize : (f:(size: number)=> number) => Promise<(IDM| IChat)[][]| undefined>;
   isReachingEnd : boolean;
   scrollRef : RefObject<Scrollbars>;

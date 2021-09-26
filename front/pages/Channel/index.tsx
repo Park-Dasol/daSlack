@@ -12,6 +12,7 @@ import { IChannel, IChat, IUser } from '@typings/db';
 import Scrollbars from 'react-custom-scrollbars';
 import axios from 'axios';
 import InviteChannelModal from '@components/InviteChannelModal';
+import makeSection from '@utils/makeSection';
 
 const Channel = () => {
   const {workspace, channel} = useParams<{workspace: string; channel: string}>();
@@ -123,7 +124,7 @@ const Channel = () => {
   //   return null;
   // }
 
-  // const chatSections = makeSection(chatData? chatData.flat().reverse() : [])
+  const chatSections = makeSection(chatData? chatData.flat().reverse() : [])
 
 
 
@@ -146,7 +147,7 @@ const Channel = () => {
           </button>
         </div>
       </Header>
-      {/* <ChatList chatSections={chatSections} scrollRef={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd}/> */}
+      <ChatList chatSections={chatSections} scrollRef={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd}/>
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm}/>
       <InviteChannelModal 
         show={showInviteChannelModal}
