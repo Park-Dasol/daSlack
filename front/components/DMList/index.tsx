@@ -1,4 +1,5 @@
 import { CollapseButton } from '@components/DMList/styles';
+import EachDM from '@components/EachDM';
 import useSocket from '@hooks/useSocket';
 import { IUser, IUserWithOnline } from '@typings/db';
 import fetcher from '@utils/fetcher';
@@ -59,20 +60,7 @@ const DMList: FC = () => {
           memberData?.map((member) => {
             const isOnline = onlineList.includes(member.id);
             return (
-              <NavLink key={member.id} activeClassName="selected" to={`/workspace/${workspace}/dm/${member.id}`}>
-                <i
-                  className={`c-icon p-channel_sidebar__presence_icon p-channel_sidebar__presence_icon--dim_enabled c-presence ${
-                    isOnline ? 'c-presence--active c-icon--presence-online' : 'c-icon--presence-offline'
-                  }`}
-                  aria-hidden="true"
-                  data-qa="presence_indicator"
-                  data-qa-presence-self="false"
-                  data-qa-presence-active="false"
-                  data-qa-presence-dnd="false"
-                />
-                <span>{member.nickname}</span>
-                {member.id === userData?.id && <span> (나)</span>}
-              </NavLink>
+              <EachDM key={member.id} member={member} isOnline={isOnline}/>
             );
           })}
       </div>

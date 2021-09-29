@@ -58,6 +58,7 @@ const Channel = () => {
       }, false)
       .then(()=> {
         setChat('')
+        localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
         scrollbarRef.current?.scrollToBottom();
       })
       axios.post(`/api/workspaces/${workspace}/channels/${channel}/chats`, {
@@ -102,6 +103,11 @@ const Channel = () => {
   }, [socket, onmessage])
 
 
+  useEffect(() => {
+    localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
+  }, [workspace, channel]);
+
+
   const onClickInviteChannel = useCallback(() => {
     setShowInviteChannelModal(true);
   }, []);
@@ -136,6 +142,7 @@ const Channel = () => {
       }
       axios.post(`/api/workspaces/${workspace}/channels/${channel}/images`, formData).then(() => {
         setDragOver(false);
+        localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
       });
     },
     [workspace, channel],

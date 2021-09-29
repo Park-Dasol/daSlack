@@ -54,6 +54,7 @@ const DirectMessage = () => {
       }, false)
       .then(()=> {
         setChat('')
+        localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
         scrollbarRef.current?.scrollToBottom();
       })
       axios.post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
@@ -116,6 +117,7 @@ const DirectMessage = () => {
       }
       axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, formData).then(() => {
         setDragOver(false);
+        localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
         revalidate();
       });
     },
@@ -134,6 +136,10 @@ const DirectMessage = () => {
       socket?.off('dm', onMessage)
     }
   }, [socket, onmessage])
+
+  useEffect(() => {
+    localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
+  }, [workspace, id]);
 
 
   //로딩시 스크롤바 제일 아래로 붙이기
